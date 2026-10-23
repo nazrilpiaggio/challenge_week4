@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import '../models/drink.dart';
 import 'drink_detail_page.dart';
+import 'add_product.dart';
 
 class HomePage extends StatefulWidget {
   final List<Drink> drinkList;
@@ -22,11 +24,15 @@ class _HomePageState extends State<HomePage> {
   String _formatRupiah(int price) {
     final digits = price.toString();
     final result = StringBuffer();
+
     for (int i = 0; i < digits.length; i++) {
       result.write(digits[i]);
       final remaining = digits.length - i - 1;
-      if (remaining > 0 && remaining % 3 == 0) result.write('.');
+      if (remaining > 0 && remaining % 3 == 0) {
+        result.write('.');
+      }
     }
+
     return 'Rp$result';
   }
 
@@ -60,22 +66,31 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               onChanged: (value) {
-                setState(() => _searchText = value.toLowerCase().trim());
+                setState(() {
+                  _searchText = value.toLowerCase().trim();
+                });
               },
             ),
           ),
           Expanded(
             child: filteredDrinks.isEmpty
-                ? const Center(child: Text('Minuman tidak ditemukan.'))
+                ? const Center(
+                    child: Text('Minuman tidak ditemukan.'),
+                  )
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(
+                      12, 0, 12, 12,
+                    ),
                     itemCount: filteredDrinks.length,
                     itemBuilder: (context, index) {
                       final drink = filteredDrinks[index];
+
                       return Card(
                         margin: const EdgeInsets.only(bottom: 10),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                          ),
                           child: ListTile(
                             leading: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
@@ -84,15 +99,26 @@ class _HomePageState extends State<HomePage> {
                                 width: 54,
                                 height: 54,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.local_cafe, color: Colors.brown),
+                                errorBuilder: (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) =>
+                                    const Icon(
+                                  Icons.local_cafe,
+                                  color: Colors.brown,
+                                ),
                               ),
                             ),
                             title: Text(
                               drink.name,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            subtitle: Text(_formatRupiah(drink.price)),
+                            subtitle: Text(
+                              _formatRupiah(drink.price),
+                            ),
                             trailing: Wrap(
                               spacing: 4,
                               children: [
@@ -101,9 +127,11 @@ class _HomePageState extends State<HomePage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => DrinkDetailPage(
+                                        builder: (_) =>
+                                            DrinkDetailPage(
                                           drink: drink,
-                                          onAddToCart: widget.onAddToCart,
+                                          onAddToCart:
+                                              widget.onAddToCart,
                                         ),
                                       ),
                                     );
@@ -111,7 +139,8 @@ class _HomePageState extends State<HomePage> {
                                   child: const Text('Detail'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () => widget.onAddToCart(drink, 1),
+                                  onPressed: () =>
+                                      widget.onAddToCart(drink, 1),
                                   child: const Text('Pesan'),
                                 ),
                               ],
@@ -123,6 +152,19 @@ class _HomePageState extends State<HomePage> {
                   ),
           ),
         ],
+      ),
+
+      // FloatingActionButton untuk membuka form tambah produk
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddProductPage(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
